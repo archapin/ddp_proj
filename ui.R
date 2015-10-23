@@ -6,11 +6,13 @@ shinyUI(fluidPage(
         titlePanel("Historical Volatility Analysis on SP500 Daily Prices"),
         sidebarLayout(
                 sidebarPanel(
-                        br(),
-                        br(),
-                        br(),
+                        h4("Instructions"),
+                        p("This shiny app download SP500 daily prices from the Index Date Range below.  
+                          Change the dates for the desired range and click update to actualize the 
+                          data used in the app."),
+                        p("Select the graphs you would like to compare using the checkbox below and 
+                          click update to actualize the volatility graph."),
                         helpText("Note:"),
-                        br(),
                         helpText("This Shiny App use data of the closing daily price from finance.yahoo.com."),
                         helpText("Data should be available for at least the previous business day.",
                                  "Calculations are possible for EWMA, whenever there are two or more",
