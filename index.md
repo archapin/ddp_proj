@@ -19,7 +19,8 @@ knit        : slidify::knit2slides
 * Most price stochastic models are based on modeling price variation
 * An important model component on measuring price variation is volatility.
 * To see some volatility estimation measures, close price data from the SP500 index in a span of two years will be used.
-* This data can be downloaded [here](http://real-chart.finance.yahoo.com/table.csv?s=%5EGSPC&d=9&e=15&f=2015&g=d&a=9&b=14&c=2013&ignore=.csv)
+* This data can be downloaded from [finance.yahoo.com](http://finance.yahoo.com)
+* The [shiny app](https://archapin.shinyapps.io/ddp_proj) created allows you to play with other date ranges and to compare volatility measures.
 
 --- 
 ## Price behaviour
