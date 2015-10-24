@@ -1,6 +1,6 @@
----
+--- 
 title       : Historical Volatility Analysis of The SP500 Index
-subtitle    : 
+subtitle    : Different Estimation Methods
 author      : Antonio Rene Hernandez
 job         : 
 framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
@@ -9,30 +9,227 @@ hitheme     : tomorrow      #
 widgets     : []            # {mathjax, quiz, bootstrap}
 mode        : selfcontained # {standalone, draft}
 knit        : slidify::knit2slides
+
 --- 
+```{r echo = FALSE, warning = FALSE}
+# Dependencies
 
-## Variation of Prices and Volatility
+library(ggplot2)
+library(scales)
+library(knitr)
+library(gridExtra)
 
-Variation of prices is one of the aspects of financial modelling that is important for the caracterization
+# Settings
 
---- .class #id 
+opts_chunk$set(warning = FALSE, echo = FALSE)
 
-## Slide 2
+# parameters
 
-
---- .class #id 
-
-## Slide 3
-
-
---- .class #id 
-
-## Slide 4
+lambda = 0.94
+dateRng = as.Date(c("2013-10-14","2015-10-15"))
 
 
---- .class #id 
 
-## Slide 5
+# Final Date
+
+d = as.integer(format(dateRng[2],"%m")) - 1 
+e = as.integer(format(dateRng[2],"%d")) 
+f = as.integer(format(dateRng[2],"%Y"))
+
+# Initial Date
+
+a = as.integer(format(dateRng[1],"%m")) - 1
+b = as.integer(format(dateRng[1],"%d"))
+c = as.integer(format(dateRng[1],"%Y"))
+
+# loading data from finance.yahoo.com
+
+data1 = read.csv(paste(
+        "http://real-chart.finance.yahoo.com/table.csv?s=%5EGSPC&d=",
+        d, "&e=", e, "&f=", f, "&g=d&a=", a, "&b=", b, "&c=", c,
+        "&ignore=.csv", sep = ""))
+
+data1$Date = as.Date(data1$Date)
+
+# Calculating logarithmic returns 
+
+data1$logret = log(data1$Close/data1$Close[2:nrow(data1)])
+data1 = data1[1:(nrow(data1)-1),]
+
+ndat = nrow(data1)
+
+# Calculating price volatility using Exponentially Weighted
+# Moving Average (exponential smoothing)
+
+data1$ewma = as.numeric(rep(NA, nrow(data1)))
+data1$ewma[ndat] = data1$logret
+for(i in (ndat-1):1){
+        data1$ewma[i] = sqrt(
+                lambda*(data1$ewma[i+1]^2)+
+                        (1-lambda)*(data1$logret[i]^2))
+}
+
+# Calculating price volatility using Moving Average of 1 month data
+# (assuming one month of data contains 21 business days)
+
+data1$ma21 = as.numeric(rep(NA, nrow(data1)))
+if(ndat>=21) {
+        for(i in 1:(ndat-20)){
+                data1$ma21[i] = sqrt(sum((data1$logret[i:(i+20)])^2)/21) 
+        }
+}
+
+# Calculating price volatility using Moving Average of 3 month data
+# (assuming two months of data contains 63 business days)
+
+data1$ma63 = as.numeric(rep(NA, nrow(data1)))
+if(ndat>=63) {
+        for(i in 1:(ndat-62)){
+                data1$ma63[i] = sqrt(sum((data1$logret[i:(i+62)])^2)/63) 
+        }
+        
+}
+
+# Calculating price volatility using Moving Average of 6 month data
+# (assuming three months of data contains 126 business days)
+
+data1$ma126 = as.numeric(rep(NA, nrow(data1)))
+if(ndat>=126){
+        for(i in 1:(ndat-125)){
+                data1$ma126[i] = sqrt(sum((data1$logret[i:(i+125)])^2)/126) 
+        }
+        
+}
 
 
---- .class #id 
+
+volgraph = function(dat, vol_meas, graphTitle){
+        g1 = ggplot(data1, aes(x =Date)) + 
+                geom_line(aes(y = logret, color = "Log Returns")) + 
+                scale_x_date(labels = date_format("%b-%Y")) +
+                labs(
+                        x = "",
+                        y = "",
+                        title = graphTitle)
+        if("1" %in% vol_meas) {
+                g1 = g1 + geom_line(aes(y = ewma, color = "EWMA"), size = 1)
+        }
+        if("2" %in% vol_meas) {
+                g1 = g1 + geom_line(aes(y = ma21, color = "MA 1M"), size = 1)
+        }
+        if("3" %in% vol_meas) {
+                g1 = g1 + geom_line(aes(y = ma63, color = "MA 3M"), size = 1)
+        }
+        if("4" %in% vol_meas) {
+                g1 = g1 + geom_line(aes(y = ma126, color = "MA 6M"), size = 1)
+        }
+        g1 = g1 + scale_color_manual(
+                name = "",
+                values = c(
+                        "Log Returns" = "darkgray",
+                        "EWMA" = "red",
+                        "MA 1M" = "blue",
+                        "MA 3M" = "green",
+                        "MA 6M" = "orange")) +
+                theme_bw() +
+                theme(legend.position="bottom")
+
+        g1
+}
+
+```
+
+## Variation of Prices of Financial Assets
+
+* Financial asset prices are stochastic processes 
+* Most price stochastic models are based on modeling price variation
+* An important model component on measuring price variation is volatility.
+* To see some volatility estimation measures, close price data from the SP500 index in a span of two years will be used.
+* This data can be downloaded [here](http://real-chart.finance.yahoo.com/table.csv?s=%5EGSPC&d=9&e=15&f=2015&g=d&a=9&b=14&c=2013&ignore=.csv)
+
+--- 
+## Price behaviour
+
+* Price behaviour is modeled as geometric brownian motion (GBM), which graphically looks lag a jigsaw path with some trend.
+* In modeling GBM, the logartithmic returns (logreturns), calculated as the difference between the logatithm of price at one time and the previous, are an esential part of them
+
+```{r pricePlot, echo = FALSE, fig.align='center',fig.width=10, fig.height=5}
+ggplot(data1, aes(Date, Close)) + geom_line(colour = "blue") + 
+                scale_x_date(labels = date_format("%b-%Y")) +
+                labs(
+                        x = "",
+                        y = "Close Price",
+                        title = "Daily Closing Prices") +
+                theme_bw()
+
+```
+
+---  
+
+## Logarithmic returns 
+
+* When graphing logreturns, it can be seen that it follows an apparent stationary process in certain lapses of time.  The distribution of this logreturns approximates to a normal distribution.
+
+```{r logretPlot, echo = FALSE, fig.align='center', warning = FALSE, fig.width=12, fig.height=5, message=FALSE}
+
+grid.arrange(
+        volgraph(data1, c(0), "Historical Logreturns"),
+        ggplot(data1, aes(logret)) + 
+                geom_histogram(aes(y = ..density..),
+                               fill = "lightblue",
+                               col = "white") +
+                geom_density(col="blue") +
+                labs(title = "Histogram of Logarithmic Returns") + 
+                theme_bw(), 
+        ncol = 2,
+        widths = c(1.2, 1)
+        )
+
+
+
+```
+
+---  
+
+## Volatility and its Estimation
+
+* Volatility is the standard deviation of this distribution.
+* Volatility varies through time.  Some simple measures are obtained through smoothing, being exponential weighted average and moving averages. Differences between this measures can be observed in the following graphs.
+
+```{r volMeasures, echo = FALSE, warning = FALSE, fig.width=12, fig.align = 'center', fig.height = 5.5}
+
+grid.arrange(volgraph(data1, c("1","3"), "EWMA and 3-Month Moving Average"),
+             volgraph(data1, c("2","3","4"), "1-Month and 6 Month Moving Averages"),
+             ncol = 2)
+
+```
+
+
+
+
+
+
+ 
+
+<style> 
+
+.title-slide {
+  background-color: #FFF; 
+}
+
+.title-slide hgroup > h1 {
+  color: #150143;
+}
+
+
+.title-slide hgroup > h2 {
+  color: #000;
+}
+
+</style>
+
+<style>
+slides > slide:not(.nobackground):after {
+  content: ";
+}
+</style>

@@ -33,7 +33,7 @@
         <slide class="title-slide segue nobackground">
   <hgroup class="auto-fadein">
     <h1>Historical Volatility Analysis of The SP500 Index</h1>
-    <h2></h2>
+    <h2>Different Estimation Methods</h2>
     <p>Antonio Rene Hernandez<br/></p>
   </hgroup>
   <article></article>  
@@ -43,58 +43,87 @@
     <!-- SLIDES -->
     <slide class="" id="slide-1" style="background:;">
   <hgroup>
-    <h2>Variation of Prices and Volatility</h2>
+    <h2>Variation of Prices of Financial Assets</h2>
   </hgroup>
   <article data-timings="">
-    <p>Variation of prices is one of the aspects of financial modelling that is important for the caracterization</p>
+    <ul>
+<li>Financial asset prices are stochastic processes </li>
+<li>Most price stochastic models are based on modeling price variation</li>
+<li>An important model component on measuring price variation is volatility.</li>
+<li>To see some volatility estimation measures, close price data from the SP500 index in a span of two years will be used.</li>
+<li>This data can be downloaded <a href="http://real-chart.finance.yahoo.com/table.csv?s=%5EGSPC&amp;d=9&amp;e=15&amp;f=2015&amp;g=d&amp;a=9&amp;b=14&amp;c=2013&amp;ignore=.csv">here</a></li>
+</ul>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="class" id="id" style="background:;">
+<slide class="" id="slide-2" style="background:;">
   <hgroup>
-    <h2>Slide 2</h2>
+    <h2>Price behaviour</h2>
   </hgroup>
   <article data-timings="">
-    
+    <ul>
+<li>Price behaviour is modeled as geometric brownian motion (GBM), which graphically looks lag a jigsaw path with some trend.</li>
+<li>In modeling GBM, the logartithmic returns (logreturns), calculated as the difference between the logatithm of price at one time and the previous, are an esential part of them</li>
+</ul>
+
+<p><img src="assets/fig/pricePlot-1.png" title="plot of chunk pricePlot" alt="plot of chunk pricePlot" style="display: block; margin: auto;" /></p>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="class" id="id" style="background:;">
+<slide class="" id="slide-3" style="background:;">
   <hgroup>
-    <h2>Slide 3</h2>
+    <h2>Logarithmic returns</h2>
   </hgroup>
   <article data-timings="">
-    
+    <ul>
+<li>When graphing logreturns, it can be seen that it follows an apparent stationary process in certain lapses of time.  The distribution of this logreturns approximates to a normal distribution.</li>
+</ul>
+
+<p><img src="assets/fig/logretPlot-1.png" title="plot of chunk logretPlot" alt="plot of chunk logretPlot" style="display: block; margin: auto;" /></p>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="class" id="id" style="background:;">
+<slide class="" id="slide-4" style="background:;">
   <hgroup>
-    <h2>Slide 4</h2>
+    <h2>Volatility and its Estimation</h2>
   </hgroup>
   <article data-timings="">
-    
-  </article>
-  <!-- Presenter Notes -->
-</slide>
+    <ul>
+<li>Volatility is the standard deviation of this distribution.</li>
+<li>Volatility varies through time.  Some simple measures are obtained through smoothing, being exponential weighted average and moving averages. Differences between this measures can be observed in the following graphs.</li>
+</ul>
 
-<slide class="class" id="id" style="background:;">
-  <hgroup>
-    <h2>Slide 5</h2>
-  </hgroup>
-  <article data-timings="">
-    
-  </article>
-  <!-- Presenter Notes -->
-</slide>
+<p><img src="assets/fig/volMeasures-1.png" title="plot of chunk volMeasures" alt="plot of chunk volMeasures" style="display: block; margin: auto;" /></p>
 
-<slide class="class" id="id" style="background:;">
-  <article data-timings="">
-    
+<style> 
+
+.title-slide {
+  background-color: #FFF; 
+}
+
+.title-slide hgroup > h1 {
+  color: #150143;
+}
+
+
+.title-slide hgroup > h2 {
+  color: #000;
+}
+
+</style>
+
+<style>
+slides > slide:not(.nobackground):after {
+  content: ";
+}
+</style>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
@@ -105,38 +134,26 @@
     <ul>
       <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=1 title='Variation of Prices and Volatility'>
+        data-slide=1 title='Variation of Prices of Financial Assets'>
          1
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=2 title='Slide 2'>
+        data-slide=2 title='Price behaviour'>
          2
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=3 title='Slide 3'>
+        data-slide=3 title='Logarithmic returns'>
          3
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=4 title='Slide 4'>
+        data-slide=4 title='Volatility and its Estimation'>
          4
-      </a>
-    </li>
-    <li>
-      <a href="#" target="_self" rel='tooltip' 
-        data-slide=5 title='Slide 5'>
-         5
-      </a>
-    </li>
-    <li>
-      <a href="#" target="_self" rel='tooltip' 
-        data-slide=6 title='NA'>
-         6
       </a>
     </li>
   </ul>
